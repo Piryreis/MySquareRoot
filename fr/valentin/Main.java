@@ -4,17 +4,28 @@ import java.util.Scanner;
 
 public class Main {
 
+    private static final Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
 
-        double number = selectNumber();
+        do {
 
-        long lastTimeMillis = System.nanoTime();
+            System.out.println("\n");
 
-        double sqrt = mySquareRoot(number);
+            double number = selectNumber();
 
-        long time = System.nanoTime() - lastTimeMillis;
+            long lastTimeMillis = System.nanoTime();
+            double sqrt = mySquareRoot(number);
+            long time = System.nanoTime() - lastTimeMillis;
+            log("La racine carrée de " + number + " est " + sqrt + ". Calculé en " + time + " nanoSeconde.");
 
-        log("La racine carrée de " + number + " est " + sqrt + ". Calculé en " + time + " nanoS4econde.");
+            long lastTimeMillisSqrtFunction = System.nanoTime();
+            double sqrtFunction = Math.sqrt(number);
+            long timeSqrtFunction = System.nanoTime() - lastTimeMillisSqrtFunction;
+            log("AVEC LA FONCTION SQRT() : La racine carrée de " + number + " est " + sqrtFunction + ". Calculé en " + timeSqrtFunction + " nanoSeconde.");
+
+        } while (true);
+
     }
 
     public static void log(String message){
@@ -22,7 +33,7 @@ public class Main {
     }
 
     private static double selectNumber(){
-        Scanner scanner = new Scanner(System.in);
+
         boolean reponse = false;
         double number = 0;
 
@@ -30,6 +41,11 @@ public class Main {
             log("Quelle racine carrée voulez-vous obtenir ?");
             try {
                 number = Double.parseDouble(scanner.nextLine());
+                if (number == 0D){
+                    log("La valeur ZERO n'a pas de racine carrée.");
+                    continue;
+                }
+                number = Math.abs(number);
                 reponse = true;
             } catch (Exception e){
                 log("Veuillez choisir un nombre correct.");
@@ -41,30 +57,19 @@ public class Main {
 
     /**
      * Algorithme ancien de Héron d'Alexandrie permettant d'obtenir rapidement une valeur approchée de la racine carrée d'un nombre A
-     * @param number
-     * @return
+     * @param number A
+     * @return la racine carrée du nombre A
      */
     public static double mySquareRoot(double number){
-        double a = number / 2d;
-        double sqrt;
-        double newsqrt;
+        double a;
+        double sqrt = number / 2d;
 
-        /*while (true){
-            newsqrt = ( (number / a) + a) / 2;
-            if (Double.compare(a, newsqrt) < 0.001) {
-                sqrt = a;
-                break;
-            }
-            else {
-                a = newsqrt;
-            }
-        }*/
-
-       for (int i = 0; i < 3000; i++){
-            a = ( (number / a) + a) / 2;
-       }
-       sqrt = a;
+        do {
+            a = sqrt;
+            sqrt = ( (number / a) + a) / 2;
+        } while (Double.compare(a, sqrt) != 0D);
 
         return sqrt;
     }
+
 }
